@@ -22,7 +22,7 @@ func NewPostgresRepository(url string) (*PostgresRepository, error) {
 }
 
 func (p *PostgresRepository) InsertUser(ctx context.Context, user *models.User) error {
-	_, err := p.db.ExecContext(ctx, "INSERT INTO users (email, password) VALUES ($1, $2)", user.Email, user.Password)
+	_, err := p.db.ExecContext(ctx, "INSERT INTO users (id, email, password) VALUES ($1, $2, $3)", user.Id, user.Email, user.Password)
 	return err
 }
 
