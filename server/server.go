@@ -5,6 +5,8 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"rest-go/db"
+	"rest-go/repository"
 
 	"github.com/gorilla/mux"
 )
@@ -49,8 +51,13 @@ func NewServer(ctx context.Context, config *Config) (broker *Broker, err error) 
 func (b *Broker) Start(binder func(s Server, r *mux.Router)) {
 	b.router = mux.NewRouter()
 	binder(b, b.router)
+	repo, err := db.NewPostgresRepository(b.config.DataBaseUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	repository.SetRepository(repo)
 	log.Println("Starting server on port", b.Config().Port)
 	if err := http.ListenAndServe(b.config.Port, b.router); err != nil {
-		log.Fatal("listen and serve: ", err)
+		log.Fatal("ListenAndServe: ", err)
 	}
 }

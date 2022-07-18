@@ -8,7 +8,7 @@ import (
 
 type HomeResponse struct {
 	Message string `json:"message"`
-	Status  bool   `json:"status"`
+	Status  string   `json:"status"`
 }
 
 func HomeHandler(s server.Server) http.HandlerFunc {
@@ -17,7 +17,7 @@ func HomeHandler(s server.Server) http.HandlerFunc {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(HomeResponse{
 			Message: "welcome to rest-go",
-			Status:  true,
+			Status:  "active",
 		})
 	}
 }
