@@ -43,7 +43,7 @@ func SignUpHandler(s server.Server) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-type", "application/json")
 		json.NewEncoder(w).Encode(SignUpResponse{
 			Id:    user.Id,
 			Email: user.Email,
