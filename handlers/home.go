@@ -22,9 +22,9 @@ func HomeHandler(s server.Server, templa *template.Template) http.HandlerFunc {
 		w.WriteHeader(http.StatusOK)
 		data := CR{
 			Response: models.ClientRespose{
-				Title:      "Bienvenido",
-				Actions:    "Puedes registrarte o loguearte ",
-				UserActive: true,
+				Title:   "Bienvenido",
+				Actions: "Puedes registrarte",
+				// UserActive: true,
 			},
 		}
 		templa.ExecuteTemplate(w, "index.html", data)
