@@ -1,23 +1,24 @@
 package handlers
 
 import (
-	"encoding/json"
+	"html/template"
 	"net/http"
 	"rest-go/server"
 )
 
 type HomeResponse struct {
 	Message string `json:"message"`
-	Status  string   `json:"status"`
+	Status  bool   `json:"status"`
 }
 
-func HomeHandler(s server.Server) http.HandlerFunc {
+func HomeHandler(s server.Server, templa *template.Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(HomeResponse{
-			Message: "welcome to rest-go",
-			Status:  "active",
-		})
+		data := HomeResponse{
+			Message: "Bienvenido",
+			Status:  true,
+		}
+		templa.ExecuteTemplate(w, "index.html", data)
 	}
 }
