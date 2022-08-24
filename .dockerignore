@@ -1,0 +1,9 @@
+*.log
+Dockerfile
+.dockerignore
+docker-compose.*
+.git
+.gitignore
+development.Dockerfile
+production.Dockerfile
+db/dataBase.Dockerfile

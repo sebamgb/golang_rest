@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      dockerfile: production.Dockerfile
+    image: rest-go-app
+    depends_on:
+      - db
+    ports:
+      - "5050:5050"
+  db:
+    image: rest-go-db
+    build:
+      dockerfile: dataBase.Dockerfile
+  dev:
+    build:
+      dockerfile: development.Dockerfile
+    image: dev
+    depends_on:
+      - db
+    volumes:
+      - .:/go/src/app
+    ports:
+      - 5150:5050
