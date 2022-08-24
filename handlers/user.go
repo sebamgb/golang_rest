@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"rest-go/models"
 	"rest-go/repository"
@@ -82,6 +83,7 @@ func LoginHandler(s server.Server) http.HandlerFunc {
 			http.Error(w, "invalid credentials", http.StatusUnauthorized)
 		}
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
+			log.Println(err)
 			http.Error(w, "invalid credentials", http.StatusUnauthorized)
 			return
 		}
