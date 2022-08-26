@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"rest-go/handlers"
+	"rest-go/middlewares"
 	"rest-go/server"
 
 	"github.com/gorilla/mux"
@@ -36,7 +37,9 @@ func main() {
 	s.Start(BindRoutes)
 }
 func BindRoutes(s server.Server, r *mux.Router) {
+	r.Use(middlewares.ChekAuthMiddleware(s))
 	r.HandleFunc("/", handlers.HomeHandler(s, templa)).Methods(http.MethodGet)
 	r.HandleFunc("/signup", handlers.SignUpHandler(s)).Methods(http.MethodPost)
 	r.HandleFunc("/login", handlers.LoginHandler(s)).Methods(http.MethodPost)
+	r.HandleFunc("/me", handlers.MeHandler(s)).Methods(http.MethodGet)
 }
