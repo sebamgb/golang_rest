@@ -51,6 +51,26 @@ func (p *PostgresRepository) GetUserById(ctx context.Context, id string) (*model
 	return &user, nil
 }
 
+func (p *PostgresRepository) GetPostById(ctx context.Context, id string) (*models.Post, error) {
+	rows, err := p.db.QueryContext(ctx, "SELECT id, post_content, created_at, user_id FROM posts WHERE id = $1", id)
+	defer func() {
+		err = rows.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+	var post = models.Post{}
+	for rows.Next() {
+		if err = rows.Scan(&post.Id, &post.PostContent, &post.CreatedAt, &post.UserId); err == nil {
+			return &post, nil
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return &post, nil
+}
+
 func (p *PostgresRepository) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	rows, err := p.db.QueryContext(ctx, "SELECT id, email, password FROM users WHERE email = $1", email)
 	defer func() {
@@ -73,4 +93,14 @@ func (p *PostgresRepository) GetUserByEmail(ctx context.Context, email string) (
 
 func (p *PostgresRepository) Close() error {
 	return p.db.Close()
+}
+
+func (p *PostgresRepository) UpdatePost(ctx context.Context, post *models.Post) error {
+	_, err := p.db.ExecContext(ctx, "UPDATE posts SET post_content = $1 WHERE id = $2 and user_id = $3", post.PostContent, post.Id, post.UserId)
+	return err
+}
+
+func (p *PostgresRepository) DeletePost(ctx context.Context, id string, userid string) error {
+	_, err := p.db.ExecContext(ctx, "DELETE FROM posts WHERE id = $1 and user_id = $2", id, userid)
+	return err
 }
