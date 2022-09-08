@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"sync"
@@ -40,4 +41,50 @@ func (h *Hub) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	h.register <- client
 
 	go client.Write()
+}
+
+func (h *Hub) Run() {
+	for {
+		select {
+		case client := <-h.register:
+			h.onConnect(client)
+		case client := <-h.unregister:
+			h.onDisconnect(client)
+		}
+	}
+}
+
+func (h *Hub) onConnect(client *Client) {
+	log.Println("Client connected", client.socket.RemoteAddr())
+
+	h.mutex.Lock()
+	defer h.mutex.Unlock()
+	client.id = client.socket.RemoteAddr().String()
+	h.clients = append(h.clients, client)
+}
+
+func (h *Hub) onDisconnect(client *Client) {
+	log.Println("Client disconnected", client.socket.RemoteAddr())
+	client.socket.Close()
+	h.mutex.Lock()
+	defer h.mutex.Unlock()
+
+	i := -1
+	for j, c := range h.clients {
+		if c.id == client.id {
+			i = j
+		}
+	}
+	copy(h.clients[i:], h.clients[i+1:])
+	h.clients[len(h.clients)-1] = nil
+	h.clients = h.clients[:len(h.clients)-1]
+}
+
+func (h *Hub) Broadcast(message any, ignore *Client) {
+	data, _ := json.Marshal(message)
+	for _, client := range h.clients {
+		if client != ignore {
+			client.outbound <- data
+		}
+	}
 }
