@@ -11,3 +11,5 @@ require (
 	github.com/segmentio/ksuid v1.0.4
 	golang.org/x/crypto v0.0.0-20220824171710-5757bc0c5503
 )
+
+require github.com/rs/cors v1.8.2

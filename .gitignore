@@ -1,5 +1,7 @@
+# test de blog
+test_blog/
 # ignore git
-.git
+.git/
 # Binaries for programs and plugins
 *.exe
 *.exe~
