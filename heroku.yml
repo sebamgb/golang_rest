@@ -1,0 +1,7 @@
+build:
+  docker:
+    release:
+      dockerfile: production.Dockerfile
+      target: runner
+    web:  production.Dockerfile
+    db: db/database.Dockerfile
