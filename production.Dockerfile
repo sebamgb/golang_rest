@@ -32,6 +32,6 @@ COPY ["./.env", "./"]
 
 COPY --from=builder ["/go/bin/rest-go-ws", "/go/bin/rest-go-ws"]
 
-EXPOSE 5050
+EXPOSE 3000
 
 ENTRYPOINT ["/go/bin/rest-go-ws"]

@@ -8,6 +8,7 @@ import (
 	"rest-go/db"
 	"rest-go/repository"
 	"rest-go/websocket"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -58,8 +59,12 @@ func NewServer(ctx context.Context, config *Config) (broker *Broker, err error) 
 }
 
 func (b *Broker) Start(binder func(s Server, r *mux.Router)) {
+	var Port = b.config.Port
 	b.router = mux.NewRouter()
 	binder(b, b.router)
+	if strings.Index(b.config.Port, ":") != 0 && !strings.Contains(b.config.Port, ":") {
+		Port = ":" + b.config.Port
+	}
 	handler := cors.Default().Handler(b.router)
 	repo, err := db.NewPostgresRepository(b.config.DataBaseUrl)
 	if err != nil {
@@ -67,8 +72,8 @@ func (b *Broker) Start(binder func(s Server, r *mux.Router)) {
 	}
 	go b.hub.Run()
 	repository.SetRepository(repo)
-	log.Println("Starting server on port", b.Config().Port)
-	if err := http.ListenAndServe(b.config.Port, handler); err != nil {
+	log.Println("Starting server on port", Port)
+	if err := http.ListenAndServe(Port, handler); err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
